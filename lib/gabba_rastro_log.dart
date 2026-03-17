@@ -58,3 +58,84 @@ class Rastro {
 //     return kDebugMode; // Só loga se o app estiver rodando em debug
 //   }
 // }
+
+/// Extensão para facilitar o uso do Rastro em qualquer objeto
+extension RastroExtension on Object? {
+  /// Loga o objeto atual como Informação (Info)
+  void rastro() {
+    Rastro.i(this?.toString() ?? 'null');
+  }
+
+  /// Loga o objeto atual como Erro (Error)
+  void rastroError([Object? error, StackTrace? stack]) {
+    Rastro.e(this?.toString() ?? 'null', error: error, stack: stack);
+  }
+}
+
+extension RastroIterableExtension on Iterable {
+  /// Loga o conteúdo de uma Lista ou Set.
+  /// [full] define se deve mostrar todos os itens.
+  /// [limit] define a quantidade manual de itens a exibir (padrão 10).
+  void rastroList({bool full = false, int limit = 10}) {
+    if (isEmpty) {
+      Rastro.i('Coleção vazia');
+      return;
+    }
+
+    final totalItens = length;
+    final limiteEfetivo = full ? totalItens : limit;
+
+    Rastro.i('Coleção com $totalItens itens (exibindo $limiteEfetivo):');
+
+    // Seleciona os itens respeitando o limite (pega os últimos)
+    final itensParaLog = totalItens <= limiteEfetivo
+        ? this
+        : toList().reversed.take(limiteEfetivo).toList().reversed;
+
+    int index = totalItens <= limiteEfetivo ? 0 : totalItens - limiteEfetivo;
+
+    for (var item in itensParaLog) {
+      Rastro.d(' [$index]: $item');
+      index++;
+    }
+
+    if (!full && totalItens > limiteEfetivo) {
+      Rastro.w(
+        '... e mais ${totalItens - limiteEfetivo} itens ocultos. Use (full: true).',
+      );
+    }
+  }
+}
+
+extension RastroMapExtension on Map {
+  /// Loga o conteúdo de um Mapa.
+  /// [full] define se deve ignorar o limite e mostrar tudo.
+  /// [limit] define a quantidade manual de linhas a serem exibidas (padrão é 10).
+  void rastroMap({bool full = false, int limit = 10}) {
+    if (isEmpty) {
+      Rastro.i('Mapa vazio');
+      return;
+    }
+
+    final totalItens = length;
+    // Se full for true, o limite é o tamanho total, senão usa o limit informado
+    final limiteEfetivo = full ? totalItens : limit;
+
+    Rastro.i('Mapa com $totalItens itens (exibindo $limiteEfetivo):');
+
+    // Lógica para pegar os últimos itens respeitando a ordem e o limite
+    final entradasParaLog = totalItens <= limiteEfetivo
+        ? entries
+        : entries.toList().reversed.take(limiteEfetivo).toList().reversed;
+
+    for (var entry in entradasParaLog) {
+      Rastro.d(' - ${entry.key}: ${entry.value}');
+    }
+
+    if (!full && totalItens > limiteEfetivo) {
+      Rastro.w(
+        '... e mais ${totalItens - limiteEfetivo} itens ocultos. Use (full: true) para ver tudo.',
+      );
+    }
+  }
+}
