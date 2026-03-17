@@ -1,39 +1,62 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Gabba Rastro Log 🐾
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+O sistema de rastreamento e logging oficial do ecossistema **Gabba**. Desenvolvido para padronizar a visualização de eventos, depuração de erros e monitoramento de fluxo nos projetos Flutter.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+## 🚀 Por que o Rastro?
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Em vez de configurar o pacote `logger` manualmente em cada projeto, o **Rastro** encapsula uma configuração opinada, garantindo que todos os apps (Launcher, Escriba, etc.) tenham a mesma identidade visual no console e o mesmo comportamento de segurança.
 
-## Features
+- **Zero Configuração:** Importe e use.
+- **Segurança:** Filtros automáticos que impedem logs em modo Release.
+- **Identidade:** Emojis e cores padronizados para cada nível de severidade.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+## 📦 Instalação
 
-## Getting started
+Como este é um pacote privado, adicione-o ao seu `pubspec.yaml` apontando para o repositório Git:
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```yaml
+dependencies:
+  gabba_rastro_log:
+    git:
+      url: https://github.com/GabbaMendonca/gabba_rastro_log.git
+      ref: main
 ```
 
-## Additional information
+## 🛠 Como usar
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+import 'package:gabba_rastro_log/gabba_rastro_log.dart';
+
+// Log de depuração simples (Debug)
+Rastro.d("Configurações de layout carregadas.");
+
+// Log de informação importante (Info)
+Rastro.i("Usuário autenticado com sucesso.");
+
+// Log de aviso (Warning)
+Rastro.w("Conexão instável, tentando reconectar...");
+
+// Log de erro (Error) com captura de StackTrace
+try {
+  metodoQueFalha();
+} catch (e, s) {
+  Rastro.e("Falha crítica ao carregar base de dados", error: e, stack: s);
+}
+```
+
+## 🎨 Níveis de Log Padronizados
+
+| **Nível**   | **Emoji** | **Uso Recomendado**                           |
+| ----------- | --------- | --------------------------------------------- |
+| **Debug**   | 🐛        | Ciclo de vida, variáveis e estados internos.  |
+| **Info**    | 💡        | Fluxos de sucesso, navegação e marcos do app. |
+| **Warning** | ⚠️        | Comportamentos inesperados, mas não fatais.   |
+| **Error**   | ⛔         | Exceções, falhas de API e erros críticos.     |
+
+## 🛡 Segurança
+
+O Rastro utiliza um DevelopmentFilter interno. Isso garante que:
+
+- Debug Mode: Todos os logs aparecem formatados no terminal.
+
+- Release/Profile Mode: O console permanece limpo, protegendo dados sensíveis e economizando processamento do dispositivo.
