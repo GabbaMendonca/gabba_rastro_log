@@ -1,7 +1,8 @@
 name: gabba_rastro_log
-description: "A new Flutter package project."
+description: "Wrapper de log personalizado para o ecossistema Gabba."
 version: 0.0.1
 homepage:
+publish_to: 'none' # Impede que você publique acidentalmente no pub.dev
 
 environment:
   sdk: ^3.10.7
