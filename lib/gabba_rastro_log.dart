@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
 /// Rastro: O sistema de log oficial do ecossistema Gabba.
@@ -5,7 +6,7 @@ class Rastro {
   static final _logger = Logger(
     printer: PrettyPrinter(
       // número de chamadas de método a serem exibidas
-      methodCount: 2,
+      methodCount: kDebugMode ? 2 : 0,
       // número de chamadas de método se for erro
       errorMethodCount: 8,
       // largura da linha
@@ -18,8 +19,8 @@ class Rastro {
       dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
     ),
     // Filtro para garantir que logs de debug não apareçam em produção
-    // filter: ProductionFilter(),
-    filter: DevelopmentFilter(),
+    filter: ProductionFilter(),
+    level: kDebugMode ? Level.debug : Level.warning,
   );
 
   /// Log para informações rápidas de depuração.
@@ -40,24 +41,7 @@ class Rastro {
     //   // _enviarParaServidor(message, error, stack);
     // }
   }
-
-  static void error(Object? message, [dynamic error, StackTrace? stackTrace]) {
-    _logger.e(message, error: error, stackTrace: stackTrace);
-
-    // Sugestão de provocação: Enviar para um serviço externo se não for Debug
-    // if (kReleaseMode && error != null) {
-    //   // _enviarParaServidor(message, error, stack);
-    // }
-  }
 }
-
-// Filtro customizado para garantir que logs NUNCA saiam em Release (segurança)
-// class DevelopmentFilter extends LogFilter {
-//   @override
-//   bool shouldLog(LogEvent event) {
-//     return kDebugMode; // Só loga se o app estiver rodando em debug
-//   }
-// }
 
 /// Extensão para facilitar o uso do Rastro em qualquer objeto
 extension RastroExtension on Object? {
